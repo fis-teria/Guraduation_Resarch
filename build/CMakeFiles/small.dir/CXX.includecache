@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/d/openCV_WorkSpace/Ohno_cmake_Desktop/src/small.cpp
+opencv2/opencv.hpp
+-
+cstdio
+-
+iostream
+-
+stdio.h
+-
+stdlib.h
+-
+
