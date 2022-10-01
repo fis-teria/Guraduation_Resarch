@@ -1,4 +1,0 @@
-/mnt/d/openCV_WorkSpace/Ohno_cmake_Desktop/build/CMakeFiles/rebuild_cache.dir
-/mnt/d/openCV_WorkSpace/Ohno_cmake_Desktop/build/CMakeFiles/edit_cache.dir
-/mnt/d/openCV_WorkSpace/Ohno_cmake_Desktop/build/CMakeFiles/match.dir
-/mnt/d/openCV_WorkSpace/Ohno_cmake_Desktop/build/CMakeFiles/small.dir
