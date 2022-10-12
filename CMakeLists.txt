@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(Ohno_cmake_Desktop VERSION 1.1.0 LANGUAGES CXX)
+project(Guraduation_Resarch VERSION 1.1.0 LANGUAGES CXX)
 # ビルドフラグの設定
 find_package( OpenMP )
 
@@ -15,8 +15,8 @@ else()
   link_directories(/usr/local/lib)
 endif()
 # ビルドに関する設定
-set(EXECUTABLES "small;match")
-set(DEPENDENT_LIBS opencv_core;opencv_highgui;opencv_imgcodecs;opencv_imgproc)
+set(EXECUTABLES "small;match;canny;binaly;proto_binaly;exif")
+set(DEPENDENT_LIBS opencv_core;opencv_highgui;opencv_imgcodecs;opencv_imgproc;exiv2)
 foreach(target IN LISTS EXECUTABLES)
   add_executable(${target} src/${target}.cpp)
   target_link_libraries(${target} ${DEPENDENT_LIBS})
