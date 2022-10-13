@@ -11,7 +11,7 @@
 #include <time.h>
 using namespace cv;
 
-//#define MATCH00to01
+#define MATCH00to01
 std::string SAVE = "save.txt";
 
 struct result
