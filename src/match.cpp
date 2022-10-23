@@ -9,7 +9,6 @@
 #include <vector>
 #include <omp.h>
 #include <time.h>
-using namespace cv;
 
 #define MATCH00to01
 std::string SAVE = "save.txt";
@@ -120,9 +119,9 @@ int main(int argc, char **argv)
   }
   */
 
-  Mat rim, sim, tim;
-  Mat c_rim, c_sim, c_tim;
-  Mat cs_rim, cs_sim, cs_tim;
+  cv::Mat rim, sim, tim;
+  cv::Mat c_rim, c_sim, c_tim;
+  cv::Mat cs_rim, cs_sim, cs_tim;
   /*
   rim = base image
   sim = normal template iamge
@@ -157,9 +156,9 @@ int main(int argc, char **argv)
   double min_t, max_t;
   double min_c, max_c;
   double min_cs, max_cs;
-  Point p_min_t, p_max_t;
-  Point p_min_c, p_max_c;
-  Point p_min_cs, p_max_cs;
+  cv::Point p_min_t, p_max_t;
+  cv::Point p_min_c, p_max_c;
+  cv::Point p_min_cs, p_max_cs;
 
 #ifdef MATCH00to01
   num_t = 671;
@@ -204,10 +203,10 @@ int main(int argc, char **argv)
     std::cout << result_path << std::endl;
     std::ofstream outputfile(result_path);
 
-    rim = imread(path, IMREAD_GRAYSCALE);
-    Canny(imread(make_cpath(dir, path_t, m)), c_rim, c_tnum1, c_tnum2);
+    rim = cv::imread(path, cv::IMREAD_GRAYSCALE);
+    cv::Canny(cv::imread(make_cpath(dir, path_t, m)), c_rim, c_tnum1, c_tnum2);
 
-    Canny(rim, cs_rim, cs_tnum1, cs_tnum2);
+    cv::Canny(rim, cs_rim, cs_tnum1, cs_tnum2);
 
     for (int k = 1; k < num_m; k++)
     {
@@ -219,18 +218,18 @@ int main(int argc, char **argv)
       dpath = make_path(dir, path_m, k);
       std::cout << "match" << path << " : " << dpath << std::endl;
 
-      sim = imread(dpath, IMREAD_GRAYSCALE);
+      sim = cv::imread(dpath, cv::IMREAD_GRAYSCALE);
 
-      matchTemplate(rim, sim(Range(7, 87), Range(10, 91)), tim, TM_CCOEFF_NORMED);
-      minMaxLoc(tim, &min_t, &max_t, &p_min_t, &p_max_t);
+      cv::matchTemplate(rim, sim(cv::Range(7, 87), cv::Range(10, 91)), tim, cv::TM_CCOEFF_NORMED);
+      cv::minMaxLoc(tim, &min_t, &max_t, &p_min_t, &p_max_t);
 
-      Canny(imread(make_cpath(dir, path_m, k)), c_sim, c_mnum1, c_mnum2);
-      matchTemplate(c_rim, c_sim(Range(70, 870), Range(100, 910)), c_tim, TM_CCOEFF_NORMED);
-      minMaxLoc(c_tim, &min_c, &max_c, &p_min_c, &p_max_c);
+      cv::Canny(cv::imread(make_cpath(dir, path_m, k)), c_sim, c_mnum1, c_mnum2);
+      cv::matchTemplate(c_rim, c_sim(cv::Range(70, 870), cv::Range(100, 910)), c_tim, cv::TM_CCOEFF_NORMED);
+      cv::minMaxLoc(c_tim, &min_c, &max_c, &p_min_c, &p_max_c);
 
-      Canny(sim, cs_sim, cs_mnum1, cs_mnum2);
-      matchTemplate(cs_rim, cs_sim(Range(7, 87), Range(10, 91)), cs_tim, TM_CCOEFF_NORMED);
-      minMaxLoc(cs_tim, &min_cs, &max_cs, &p_min_cs, &p_max_cs);
+      cv::Canny(sim, cs_sim, cs_mnum1, cs_mnum2);
+      cv::matchTemplate(cs_rim, cs_sim(cv::Range(7, 87), cv::Range(10, 91)), cs_tim, cv::TM_CCOEFF_NORMED);
+      cv::minMaxLoc(cs_tim, &min_cs, &max_cs, &p_min_cs, &p_max_cs);
 
       results.resize(result_size + 1);
       results[result_size].max_t = max_t;
