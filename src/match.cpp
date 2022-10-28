@@ -25,6 +25,15 @@ struct result
   int y_c;
 };
 
+struct resultLH
+{
+  double max_l;
+  double max_sl;
+  double max_h;
+  double max_sh;
+  int num;
+};
+
 void print_elapsed_time(clock_t begin, clock_t end)
 {
   float elapsed = (float)(end - begin) / CLOCKS_PER_SEC;
@@ -71,6 +80,26 @@ std::string make_rpath(std::string dir, int dir_num, int var)
   }
 }
 
+std::string make_rpathLH(std::string dir, int dir_num, int var)
+{
+  std::string back;
+  if (var < 10)
+  {
+    back = dir + std::to_string(dir_num) + "LH/00000" + std::to_string(var) + ".csv";
+    return back;
+  }
+  else if (var < 100)
+  {
+    back = dir + std::to_string(dir_num) + "LH/0000" + std::to_string(var) + ".csv";
+    return back;
+  }
+  else if (1 < 1000)
+  {
+    back = dir + std::to_string(dir_num) + "LH/000" + std::to_string(var) + ".csv";
+    return back;
+  }
+}
+
 std::string make_cpath(std::string dir, int dir_num, int var)
 {
   std::string back;
@@ -103,22 +132,16 @@ int read_save()
 }
 
 void save(int m)
+
 {
   std::ofstream savefile(SAVE.c_str());
   savefile << m << std::endl;
   savefile.close();
 }
 
-int main(int argc, char **argv)
-{
-  /*
-  if (argc != 3)
-  {
-    fprintf(stderr, "usage: %s R_image S_image\n", argv[0]);
-    return 1;
-  }
-  */
 
+void templete_Canny()
+{
   cv::Mat rim, sim, tim;
   cv::Mat c_rim, c_sim, c_tim;
   cv::Mat cs_rim, cs_sim, cs_tim;
@@ -148,11 +171,11 @@ int main(int argc, char **argv)
   std::string path;
   std::string dpath;
   std::string result_path;
-  int c_tnum1,c_tnum2;
-  int cs_tnum1,cs_tnum2;
-  int c_mnum1,c_mnum2;
-  int cs_mnum1,cs_mnum2;
-  
+  int c_tnum1, c_tnum2;
+  int cs_tnum1, cs_tnum2;
+  int c_mnum1, c_mnum2;
+  int cs_mnum1, cs_mnum2;
+
   double min_t, max_t;
   double min_c, max_c;
   double min_cs, max_cs;
@@ -242,7 +265,7 @@ int main(int argc, char **argv)
       results[result_size].y_c = p_max_c.y;
       result_size++;
       // printf("max = %f at (%d,%d)\n", max, p_max.x, p_max.y);
-      outputfile << k << "," << max_t << "," << max_c << ","<< max_cs << std::endl;
+      outputfile << k << "," << max_t << "," << max_c << "," << max_cs << std::endl;
       // sleep(1);
       clock_t end = clock();
       print_elapsed_time(begin, end);
@@ -269,6 +292,215 @@ int main(int argc, char **argv)
     */
   }
   save(0);
+}
+
+int LBP_filter[3][3] = {{64, 32, 16},
+                        {128, 0, 8},
+                        {1, 2, 4}};
+
+void cvt_LBP(const cv::Mat &src, cv::Mat &dst)
+{
+  dst = cv::Mat(src.rows, src.cols, CV_8UC1);
+  cv::Mat padsrc = src.clone();
+  //cv::cvtColor(padsrc, padsrc, cv::COLOR_BGR2GRAY);
+  copyMakeBorder(padsrc, padsrc, 1, 1, 1, 1, cv::BORDER_REPLICATE);
+
+  for (int x = 1; x < padsrc.cols - 1; x++)
+  {
+    for (int y = 1; y < padsrc.rows - 1; y++)
+    {
+      for (int i = 0; i < 3; i++)
+      {
+        for (int j = 0; j < 3; j++)
+        {
+          if (padsrc.at<unsigned char>(y - 1 + j, x - 1 + i) >= padsrc.at<unsigned char>(y, x))
+            dst.at<unsigned char>(y-1, x-1) += LBP_filter[i][j];
+        }
+      }
+    }
+  }
+}
+
+void templete_LBPandHOG()
+{
+  cv::Mat rim, sim, tim;
+  cv::Mat l_rim, l_sim, l_tim;
+  cv::Mat sl_rim, sl_sim, sl_tim;
+  cv::Mat h_rim, h_sim, h_tim;
+  cv::Mat sh_rim, sh_sim, sh_tim;
+  /*
+  rim = base image
+  sim = normal template iamge
+  tim = result normal template matching
+  l_rim = LBP  before resize rim
+  l_sim = LBP  before resize sim
+  l_tim = result cim template matching
+  sl_rim = LBP  after resize rim
+  sl_sim = LBP  after resize sim
+  sl_tim = result cim template matching
+  h_rim = HOG  before resize rim
+  h_sim = HOG  before resizesim
+  h_tim = result cim template matching
+  sh_rim = HOG  after resize rim
+  sh_sim = HOG  after resize sim
+  sh_tim = result cim template matching
+
+  */
+  int i, j; // seed num
+  int num_t, num_m;
+  int path_t, path_m;
+  int load_num = read_save();
+  std::cout << load_num << std::endl;
+  int average = 0;
+  int result_size = 0;
+  std::vector<resultLH> results;
+  std::string dir = "Test0";
+  std::string r_dir = "result0";
+  std::cout << dir << "\n";
+  std::string path;
+  std::string dpath;
+  std::string result_path;
+  int c_tnum1, c_tnum2;
+  int cs_tnum1, cs_tnum2;
+  int c_mnum1, c_mnum2;
+  int cs_mnum1, cs_mnum2;
+
+  double min_l, max_l;
+  double min_sl, max_sl;
+  double min_h, max_h;
+  double min_sh, max_sh;
+  cv::Point p_min_l, p_max_l;
+  cv::Point p_min_sl, p_max_sl;
+  cv::Point p_min_h, p_max_h;
+  cv::Point p_min_sh, p_max_sh;
+
+#ifdef MATCH00to01
+  num_t = 671;
+  num_m = 489;
+  path_t = 0;
+  path_m = 1;
+  c_tnum1 = 100;
+  c_tnum2 = 200;
+  cs_tnum1 = 200;
+  cs_tnum2 = 400;
+  c_mnum1 = 100;
+  c_mnum2 = 400;
+  cs_mnum1 = 500;
+  cs_mnum2 = 600;
+#endif
+
+#ifndef MATCH00to01
+  num_t = 489;
+  num_m = 671;
+  path_t = 1;
+  path_m = 0;
+  c_tnum1 = 100;
+  c_tnum2 = 400;
+  cs_tnum1 = 500;
+  cs_tnum2 = 600;
+  c_mnum1 = 100;
+  c_mnum2 = 200;
+  cs_mnum1 = 200;
+  cs_mnum2 = 400;
+#endif
+  for (int m = load_num; m < num_t; m++)
+  {
+
+    //テンプレート画像へのパス
+    /*srand((unsigned int)time(NULL));
+    i = rand() % num_t;
+    sleep(1);
+    */
+    path = make_path(dir, path_t, m);
+    result_path = make_rpath(r_dir, path_t, m);
+    std::cout << path << std::endl;
+    std::cout << result_path << std::endl;
+    std::ofstream outputfile(result_path);
+
+    rim = cv::imread(path, cv::IMREAD_GRAYSCALE);
+    // LBP
+    cvt_LBP(cv::imread(make_cpath(dir, path_t, m), 0), l_rim);
+    // small LBP
+    cvt_LBP(rim, sl_rim);
+    // HOG
+    // small HOG
+
+    for (int k = 1; k < num_m; k++)
+    {
+      clock_t begin = clock();
+      /*マッチング画像へのパス
+      srand((unsigned int)time(NULL));
+      j = rand() % 490;
+      */
+      dpath = make_path(dir, path_m, k);
+      std::cout << "match" << path << " : " << dpath << std::endl;
+
+      sim = cv::imread(dpath, cv::IMREAD_GRAYSCALE);
+
+      // LBP
+      cv::Canny(cv::imread(make_cpath(dir, path_m, k)), l_sim, c_mnum1, c_mnum2);
+      cv::matchTemplate(l_rim, l_sim(cv::Range(70, 870), cv::Range(100, 910)), l_tim, cv::TM_CCOEFF_NORMED);
+      cv::minMaxLoc(l_tim, &min_l, &max_l, &p_min_l, &p_max_l);
+
+      cv::Canny(sim, sl_sim, cs_mnum1, cs_mnum2);
+      cv::matchTemplate(sl_rim, sl_sim(cv::Range(7, 87), cv::Range(10, 91)), sl_tim, cv::TM_CCOEFF_NORMED);
+      cv::minMaxLoc(sl_tim, &min_sl, &max_sl, &p_min_sl, &p_max_sl);
+
+      // HOG
+      cv::Canny(cv::imread(make_cpath(dir, path_m, k)), h_sim, c_mnum1, c_mnum2);
+      cv::matchTemplate(h_rim, h_sim(cv::Range(70, 870), cv::Range(100, 910)), h_tim, cv::TM_CCOEFF_NORMED);
+      cv::minMaxLoc(h_tim, &min_h, &max_h, &p_min_h, &p_max_h);
+
+      cv::Canny(sim, sh_sim, cs_mnum1, cs_mnum2);
+      cv::matchTemplate(sh_rim, sh_sim(cv::Range(7, 87), cv::Range(10, 91)), sh_tim, cv::TM_CCOEFF_NORMED);
+      cv::minMaxLoc(sh_tim, &min_sh, &max_sh, &p_min_sh, &p_max_sh);
+
+      results.resize(result_size + 1);
+      results[result_size].max_l = max_l;
+      results[result_size].max_sl = max_sl;
+      results[result_size].max_h = max_sl;
+      results[result_size].max_sh = max_sl;
+      results[result_size].num = k;
+      result_size++;
+      // printf("max = %f at (%d,%d)\n", max, p_max.x, p_max.y);
+      outputfile << k << "," << max_l << "," << max_sl << "," << max_h << "," << max_sh << std::endl;
+      // sleep(1);
+      clock_t end = clock();
+      print_elapsed_time(begin, end);
+    }
+
+    outputfile.close();
+    //類似度を昇順にソート
+    //最大の類似度を持つマッチング画像へのパス
+    /*
+    dpath = make_path(dir, path_m, results[result_size - 1].num);
+    std::cout << path << " : " << dpath << std::endl;
+    std::cout
+        << "all max = " << results[result_size - 1].max_t << "(x ,y ) = (" << results[result_size - 1].x_t << ", " << results[result_size - 1].y_t << ")" << std::endl;
+    */
+    save(m);
+    /*
+    cv::namedWindow("template");
+    cv::imshow("template", rim);
+    cv::namedWindow("result");
+    cv::imshow("result", imread(dpath, 0));
+    cv::waitKey(0);
+    */
+  }
+  save(0);
+}
+int main(int argc, char **argv)
+{
+  /*
+  if (argc != 3)
+  {
+    fprintf(stderr, "usage: %s R_image S_image\n", argv[0]);
+    return 1;
+  }
+  */
+
+  templete_Canny();
+  templete_LBPandHOG();
 
   return 0;
 }

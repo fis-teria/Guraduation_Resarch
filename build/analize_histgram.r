@@ -1,4 +1,4 @@
-num = "3"
+num = "2"
 switch(num,
 "1" = setwd("D:\\openCV_WorkSpace\\Ohno_cmake_Desktop\\build\\gra\\r_file"),
 "2" = setwd("/home/user/Guraduation_Resarch/Guraduation_Resarch/build/gra/r_file"),

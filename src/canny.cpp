@@ -1,6 +1,7 @@
 #include <opencv2/opencv.hpp>
 #include <cstdio>
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
@@ -66,9 +67,10 @@ std::string make_cpath(std::string dir, int dir_num, int var)
         return back;
     }
 }
+
 void gaussian(const cv::Mat &src, cv::Mat &dst, int ksize, double sigma)
 {
-    dst = cv::Mat(src.rows, src.cols, CV_8UC3);
+    dst = cv::Mat(src.rows - 2, src.cols - 2, CV_8UC3);
     double gauss_const = 1 / (2 * CV_PI * sigma * sigma);
     int size = ksize;
     double gauss_weight[size][size];
@@ -88,21 +90,21 @@ void gaussian(const cv::Mat &src, cv::Mat &dst, int ksize, double sigma)
             {
                 for (int j = 0; j < size; j++)
                 {
-                    if (x + i - -(int)(size / 2) < 0)
+                    if (x + i - (int)(size / 2) < 0)
                         std::cout << "1" << std::endl;
-                    dst.at<cv::Vec3b>(y, x)[0] += (src.at<cv::Vec3b>(y + j - (int)(size / 2), x + i - (int)(size / 2))[0] * gauss_weight[i][j]);
-                    dst.at<cv::Vec3b>(y, x)[1] += (src.at<cv::Vec3b>(y + j - (int)(size / 2), x + i - (int)(size / 2))[1] * gauss_weight[i][j]);
-                    dst.at<cv::Vec3b>(y, x)[2] += (src.at<cv::Vec3b>(y + j - (int)(size / 2), x + i - (int)(size / 2))[2] * gauss_weight[i][j]);
+                    dst.at<cv::Vec3b>(y - 1, x - 1)[0] += (src.at<cv::Vec3b>(y + j - (int)(size / 2), x + i - (int)(size / 2))[0] * gauss_weight[i][j]);
+                    dst.at<cv::Vec3b>(y - 1, x - 1)[1] += (src.at<cv::Vec3b>(y + j - (int)(size / 2), x + i - (int)(size / 2))[1] * gauss_weight[i][j]);
+                    dst.at<cv::Vec3b>(y - 1, x - 1)[2] += (src.at<cv::Vec3b>(y + j - (int)(size / 2), x + i - (int)(size / 2))[2] * gauss_weight[i][j]);
                 }
             }
         }
     }
-    //cv::imshow("x", dst);
+    // cv::imshow("x", dst);
 }
 void check_sky_edge(const cv::Mat src)
 {
     std::cout << "start check_sky_edge" << std::endl;
-    cv::Mat gim;
+    cv::Mat gim, bim;
     cv::Mat simx, simy;
     cv::Mat result = cv::Mat(src.rows, src.cols, CV_8UC3);
     int edge_Inte = 0;
@@ -113,16 +115,20 @@ void check_sky_edge(const cv::Mat src)
     std::vector<int> edge_sum;
     double sum;
     int count = 0;
-    //imshow("w", src);
-    gaussian(src, gim, 3, 0.8);
-    //cv::GaussianBlur(src, gim, cv::Size(5, 5), 0, 0, cv::BORDER_DEFAULT);
-    //cv::imshow("d", gim);
-    //cv::waitKey(0);
+    copyMakeBorder(src, bim, 1, 1, 1, 1, cv::BORDER_REPLICATE);
+    gaussian(bim, gim, 3, 0.8);
+    imshow("w", gim);
+    // cv::GaussianBlur(src, gim, cv::Size(5, 5), 0, 0, cv::BORDER_DEFAULT);
+    //  cv::imshow("d", gim);
+    //  cv::waitKey(0);
+    cv::cvtColor(gim, gim, cv::COLOR_BGR2GRAY);
     cv::Sobel(gim, simx, CV_32FC1, 1, 0);
-    cv::Sobel(gim, simy, CV_32FC1, 0, 1);
+    cv::Sobel(gim, simy, CV_32FC1, 0, 1); // 316
 
     std::ofstream outputfile("gra/r_file/canny_histgram.csv");
+    // std::ofstream outputfile2("gra/result_Space/edge_strength.txt");
     std::cout << simx.cols << " " << src.cols << std::endl;
+
     for (int x = 0; x < src.cols; x++)
     {
         for (int y = 0; y < src.rows; y++)
@@ -132,17 +138,18 @@ void check_sky_edge(const cv::Mat src)
             edge_Inte = sqrt(dx * dx + dy * dy) + 0.5; // intに変更するときの少数値切り捨て対策
 
             theta = (atan2(dy, dx) + CV_PI - (CV_PI / 4)) * (180 / (2 * CV_PI));
-            if (1)
+            // outputfile2 << edge_Inte << ", " << theta << std::endl;
+            if (edge_Inte >= 0)
             {
                 if (theta > 47.5 && theta <= 112.5) // 90
                 {
-                    if (y - 1 > 0)
+                    if (y - 1 >= 0)
                         edge_Inte2 = sqrt(simx.at<float>(y - 1, x) * simx.at<float>(y - 1, x) + simy.at<float>(y - 1, x) * simy.at<float>(y - 1, x)) + 0.5;
                     if (y + 1 < src.rows)
                         edge_Inte3 = sqrt(simx.at<float>(y + 1, x) * simx.at<float>(y + 1, x) + simy.at<float>(y + 1, x) * simy.at<float>(y + 1, x)) + 0.5;
                     if (edge_Inte > edge_Inte2 && edge_Inte > edge_Inte3)
                     {
-                        result.at<cv::Vec3b>(y, x) = cv::Vec3b(255, 255, 255);
+                        result.at<cv::Vec3b>(y, x) = cv::Vec3b(255, 0, 0);
                         // std::cout << edge_Inte << ", " << theta << std::endl;
                         edge_sum.resize(count + 1);
                         edge_sum[count] += edge_Inte;
@@ -154,13 +161,13 @@ void check_sky_edge(const cv::Mat src)
                 }
                 else if (theta >= -22.5 && theta <= 22.5) // 0
                 {
-                    if (x - 1 > 0)
+                    if (x - 1 >= 0)
                         edge_Inte2 = sqrt(simx.at<float>(y, x - 1) * simx.at<float>(y, x - 1) + simy.at<float>(y, x - 1) * simy.at<float>(y, x - 1)) + 0.5;
-                    if (x + 1 < src.cols)
+                    if (x + 1 <= src.cols)
                         edge_Inte3 = sqrt(simx.at<float>(y, x + 1) * simx.at<float>(y, x + 1) + simy.at<float>(y, x + 1) * simy.at<float>(y, x + 1)) + 0.5;
                     if (edge_Inte > edge_Inte2 && edge_Inte > edge_Inte3)
                     {
-                        result.at<cv::Vec3b>(y, x) = cv::Vec3b(255, 255, 255);
+                        result.at<cv::Vec3b>(y, x) = cv::Vec3b(0, 255, 0);
                         // std::cout << edge_Inte << ", " << theta << std::endl;
                         edge_sum.resize(count + 1);
                         edge_sum[count] += edge_Inte;
@@ -178,7 +185,7 @@ void check_sky_edge(const cv::Mat src)
                         edge_Inte3 = sqrt(simx.at<float>(y + 1, x + 1) * simx.at<float>(y + 1, x + 1) + simy.at<float>(y + 1, x + 1) * simy.at<float>(y + 1, x + 1)) + 0.5;
                     if (edge_Inte > edge_Inte2 && edge_Inte > edge_Inte3)
                     {
-                        result.at<cv::Vec3b>(y, x) = cv::Vec3b(255, 255, 255);
+                        result.at<cv::Vec3b>(y, x) = cv::Vec3b(0, 0, 255);
                         // std::cout << edge_Inte << ", " << theta << std::endl;
                         edge_sum.resize(count + 1);
                         edge_sum[count] += edge_Inte;
@@ -206,22 +213,25 @@ void check_sky_edge(const cv::Mat src)
                     else
                         result.at<cv::Vec3b>(y, x) = cv::Vec3b(0, 0, 0);
                 }
+                else
+                    result.at<cv::Vec3b>(y, x) = cv::Vec3b(0, 0, 0);
             }
             edge_Inte2 = 0;
             edge_Inte3 = 0;
         }
     }
     outputfile.close();
+    // outputfile2.close();
     sum = std::accumulate(edge_sum.begin(), edge_sum.end(), 0.0);
-    //std::cout << "a" << std::endl;
-    // std::cout << sum / count << ", " << *max_element(edge_sum.begin(), edge_sum.end()) << ", " << *min_element(edge_sum.begin(), edge_sum.end()) << std::endl;
+    // std::cout << "a" << std::endl;
+    //  std::cout << sum / count << ", " << *max_element(edge_sum.begin(), edge_sum.end()) << ", " << *min_element(edge_sum.begin(), edge_sum.end()) << std::endl;
     /*
     cv::imshow("a", src);
     cv::imshow("b", simx);
     cv::imshow("c", simy);
+     */
     cv::imshow("g", result);
     cv::waitKey(0);
-    */
 }
 
 int main(int argc, char **argv)
@@ -248,9 +258,9 @@ int main(int argc, char **argv)
     // test00
     path = make_path(dir, 0, i);
     rim = cv::imread(path, cv::IMREAD_GRAYSCALE);
-    check_sky_edge(aim(cv::Range(0, aim.rows / 5), cv::Range(2 * aim.cols / 5, 3 * aim.cols / 5)));
-    //check_sky_edge(aim);
-    cv::Canny(cv::imread(make_cpath(dir, 0, i)), c_rim, 100, 200);
+    // check_sky_edge(aim(cv::Range(0, aim.rows / 5), cv::Range(2 * aim.cols / 5, 3 * aim.cols / 5)));
+    check_sky_edge(aim);
+    cv::Canny(cv::imread(make_cpath(dir, 0, i)), c_rim, 80, 200);
     cv::Canny(rim, cs_rim, 200, 400);
 
     // test01
@@ -260,13 +270,13 @@ int main(int argc, char **argv)
     cv::Canny(sim, cs_sim, 500, 600);
 
     /*** 画像を表示 ***/
-    /*
     cv::imshow("1", rim);
     cv::imshow("2", sim);
     cv::imshow("3", c_rim);
     cv::imshow("4", c_sim);
     cv::imshow("5", cs_rim);
     cv::imshow("6", cs_sim);
+    /*
     cv::imwrite("gra/slide/01.jpg", rim);
     cv::imwrite("gra/slide/02.jpg", sim);
     cv::imwrite("gra/slide/03.jpg", c_rim);
