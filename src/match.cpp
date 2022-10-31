@@ -10,9 +10,24 @@
 #include <omp.h>
 #include <time.h>
 
+//#define rootGunDai
 #define MATCH00to01
+#define root1001_1430match2_917
+#define root1001_1435match2_1001_1030
 std::string SAVE = "save.txt";
+/*
+0917_1349
+start 50
+end 4546
 
+1001_1030
+start 33
+end 2469
+
+1001_1435
+start 27
+end 4548
+*/
 struct result
 {
   double max_t;
@@ -139,8 +154,7 @@ void save(int m)
   savefile.close();
 }
 
-
-void templete_Canny()
+void templete_Canny(int execute_num)
 {
   cv::Mat rim, sim, tim;
   cv::Mat c_rim, c_sim, c_tim;
@@ -183,35 +197,73 @@ void templete_Canny()
   cv::Point p_min_c, p_max_c;
   cv::Point p_min_cs, p_max_cs;
 
-#ifdef MATCH00to01
-  num_t = 671;
-  num_m = 489;
-  path_t = 0;
-  path_m = 1;
-  c_tnum1 = 100;
-  c_tnum2 = 200;
-  cs_tnum1 = 200;
-  cs_tnum2 = 400;
-  c_mnum1 = 100;
-  c_mnum2 = 400;
-  cs_mnum1 = 500;
-  cs_mnum2 = 600;
-#endif
+  switch (execute_num)
+  {
+  case 11: // Match 00 to 01
+    num_t = 671;
+    num_m = 489;
+    path_t = 0;
+    path_m = 1;
+    c_tnum1 = 100;
+    c_tnum2 = 200;
+    cs_tnum1 = 200;
+    cs_tnum2 = 400;
+    c_mnum1 = 100;
+    c_mnum2 = 400;
+    cs_mnum1 = 500;
+    cs_mnum2 = 600;
+    break;
+  case 12: // Match 01 to 00
+    num_t = 489;
+    num_m = 671;
+    path_t = 1;
+    path_m = 0;
+    c_tnum1 = 100;
+    c_tnum2 = 400;
+    cs_tnum1 = 500;
+    cs_tnum2 = 600;
+    c_mnum1 = 100;
+    c_mnum2 = 200;
+    cs_mnum1 = 200;
+    cs_mnum2 = 400;
 
-#ifndef MATCH00to01
-  num_t = 489;
-  num_m = 671;
-  path_t = 1;
-  path_m = 0;
-  c_tnum1 = 100;
-  c_tnum2 = 400;
-  cs_tnum1 = 500;
-  cs_tnum2 = 600;
-  c_mnum1 = 100;
-  c_mnum2 = 200;
-  cs_mnum1 = 200;
-  cs_mnum2 = 400;
-#endif
+    break;
+  case 21: // Match 1001_1030 to 0917_1349
+    num_t = 671;
+    num_m = 489;
+    path_t = 0;
+    path_m = 1;
+    c_tnum1 = 100;
+    c_tnum2 = 200;
+    cs_tnum1 = 200;
+    cs_tnum2 = 400;
+    c_mnum1 = 100;
+    c_mnum2 = 400;
+    cs_mnum1 = 500;
+    cs_mnum2 = 600;
+
+    break;
+  case22: // Match 1001_1030 to 1001_1435
+    num_t = 671;
+    num_m = 489;
+    path_t = 0;
+    path_m = 1;
+    c_tnum1 = 100;
+    c_tnum2 = 200;
+    cs_tnum1 = 200;
+    cs_tnum2 = 400;
+    c_mnum1 = 100;
+    c_mnum2 = 400;
+    cs_mnum1 = 500;
+    cs_mnum2 = 600;
+
+    break;
+
+  default:
+    std::cout << "error! can't use this number!!!!" << std::endl;
+    std::cout << "prease use one of these number\nGunDai Root\n11 base 00 template 01\n12 base 01 template 00\n\nTsukuba Root\n21 base 1001_1030 template 0917_1349\n22 bas 1001_1030 template 1001_1435" << std::endl;
+    return;
+  }
   for (int m = load_num; m < num_t; m++)
   {
 
@@ -302,7 +354,7 @@ void cvt_LBP(const cv::Mat &src, cv::Mat &dst)
 {
   dst = cv::Mat(src.rows, src.cols, CV_8UC1);
   cv::Mat padsrc = src.clone();
-  //cv::cvtColor(padsrc, padsrc, cv::COLOR_BGR2GRAY);
+  // cv::cvtColor(padsrc, padsrc, cv::COLOR_BGR2GRAY);
   copyMakeBorder(padsrc, padsrc, 1, 1, 1, 1, cv::BORDER_REPLICATE);
 
   for (int x = 1; x < padsrc.cols - 1; x++)
@@ -314,14 +366,14 @@ void cvt_LBP(const cv::Mat &src, cv::Mat &dst)
         for (int j = 0; j < 3; j++)
         {
           if (padsrc.at<unsigned char>(y - 1 + j, x - 1 + i) >= padsrc.at<unsigned char>(y, x))
-            dst.at<unsigned char>(y-1, x-1) += LBP_filter[i][j];
+            dst.at<unsigned char>(y - 1, x - 1) += LBP_filter[i][j];
         }
       }
     }
   }
 }
 
-void templete_LBPandHOG()
+void templete_LBPandHOG(int execute_num)
 {
   cv::Mat rim, sim, tim;
   cv::Mat l_rim, l_sim, l_tim;
@@ -374,6 +426,7 @@ void templete_LBPandHOG()
   cv::Point p_min_h, p_max_h;
   cv::Point p_min_sh, p_max_sh;
 
+#ifdef rootGunDai
 #ifdef MATCH00to01
   num_t = 671;
   num_m = 489;
@@ -402,6 +455,25 @@ void templete_LBPandHOG()
   c_mnum2 = 200;
   cs_mnum1 = 200;
   cs_mnum2 = 400;
+#endif
+#endif
+
+#ifndef rootGunDai
+#ifdef MATCH00to01
+  num_t = 671;
+  num_m = 489;
+  path_t = 0;
+  path_m = 1;
+  c_tnum1 = 100;
+  c_tnum2 = 200;
+  cs_tnum1 = 200;
+  cs_tnum2 = 400;
+  c_mnum1 = 100;
+  c_mnum2 = 400;
+  cs_mnum1 = 500;
+  cs_mnum2 = 600;
+#endif
+
 #endif
   for (int m = load_num; m < num_t; m++)
   {
@@ -489,18 +561,18 @@ void templete_LBPandHOG()
   }
   save(0);
 }
+
 int main(int argc, char **argv)
 {
-  /*
-  if (argc != 3)
+  if (argc != 2)
   {
-    fprintf(stderr, "usage: %s R_image S_image\n", argv[0]);
+    std::cout << "prease select number\nGunDai Root\n11 base 00 template 01\n12 base 01 template 00\n\nTsukuba Root\n21 base 1001_1030 template 0917_1349\n22 bas 1001_1030 template 1001_1435" << std::endl;
     return 1;
   }
-  */
+  int execute_num = atoi(argv[1]);
 
-  templete_Canny();
-  templete_LBPandHOG();
+  templete_Canny(execute_num);
+  // templete_LBPandHOG(execute_num);
 
   return 0;
 }

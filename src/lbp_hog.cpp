@@ -172,7 +172,7 @@ void cvt_HOG(const cv::Mat &src, cv::Mat &dst){
         cv::Point rd(CELL_SIZE*0.5*cos(theta), CELL_SIZE*0.5*sin(theta));
         cv::Point rp = center -   rd;
         cv::Point lp = center -  -rd;
-        cv::line(image, rp, lp, cv::Scalar(255*meanHOGInBlock.at<float>(c cd 0, i), 255, 255));
+        cv::line(image, rp, lp, cv::Scalar(255*meanHOGInBlock.at<float>(0, i), 255, 255));
       }
     }
   }
