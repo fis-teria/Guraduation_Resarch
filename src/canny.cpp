@@ -257,25 +257,25 @@ int main(int argc, char **argv)
         return -1;
     // test00
     path = make_path(dir, 0, i);
-    rim = cv::imread("gra/Tsukuba_0917_1349/000500.png", cv::IMREAD_GRAYSCALE);
+    rim = cv::imread("gra/Tsukuba00/000500.png", cv::IMREAD_GRAYSCALE);
     // check_sky_edge(aim(cv::Range(0, aim.rows / 5), cv::Range(2 * aim.cols / 5, 3 * aim.cols / 5)));
     // check_sky_edge(aim);
-    cv::Canny(rim, c_rim, 300, 600);
+    cv::Canny(rim, c_rim, 200, 500);
     cv::resize(rim, rim, cv::Size(), 0.1, 0.1);
     cv::Canny(rim, cs_rim, 200, 400);
 
     // test01
     dpath = make_path(dir, 1, j);
-    sim = cv::imread("gra/Tsukuba_1001_1030/000500.png", cv::IMREAD_GRAYSCALE);
-    cv::Canny(sim, c_sim, 300, 600);
+    sim = cv::imread("gra/Tsukuba01/000500.png", cv::IMREAD_GRAYSCALE);
+    cv::Canny(sim, c_sim, 200, 500);
     cv::resize(sim, sim, cv::Size(), 0.1, 0.1);
-    cv::Canny(sim, cs_sim, 500, 600);
+    cv::Canny(sim, cs_sim, 200, 400);
 
     /*** 画像を表示 ***/
     cv::imshow("1", rim);
     cv::imshow("2", sim);
     cv::imshow("3", c_rim);
-    cv::imshow("4", c_sim);
+    cv::imshow("4", c_sim(cv::Range(c_sim.rows / 10, (9 * c_sim.rows) / 10), cv::Range(c_sim.cols / 10, (9 * c_sim.cols) / 10)));
     cv::imshow("5", cs_rim);
     cv::imshow("6", cs_sim);
     /*
