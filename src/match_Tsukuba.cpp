@@ -14,7 +14,7 @@
 #define MATCH00to01
 #define root1001_1430match2_917
 #define root1001_1435match2_1001_1030
-std::string SAVE = "save.txt";
+std::string SAVE = "save_tsukuba.txt";
 /*
 0917_1349
 start 50
@@ -80,17 +80,17 @@ std::string make_rpath(std::string dir, int dir_num, int var)
     std::string back;
     if (var < 10)
     {
-        back = dir + std::to_string(dir_num) + "_CSV/00000" + std::to_string(var) + ".csv";
+        back = dir + std::to_string(dir_num) + "/00000" + std::to_string(var) + ".csv";
         return back;
     }
     else if (var < 100)
     {
-        back = dir + std::to_string(dir_num) + "_CSV/0000" + std::to_string(var) + ".csv";
+        back = dir + std::to_string(dir_num) + "/0000" + std::to_string(var) + ".csv";
         return back;
     }
     else if (1 < 1000)
     {
-        back = dir + std::to_string(dir_num) + "_CSV/000" + std::to_string(var) + ".csv";
+        back = dir + std::to_string(dir_num) + "/000" + std::to_string(var) + ".csv";
         return back;
     }
 }
@@ -239,7 +239,7 @@ void templete_Canny(int execute_num)
 
     default:
         std::cout << "error! can't use this number!!!!" << std::endl;
-        std::cout << "prease use one of these number\nGunDai Root\n11 base 00 template 01\n12 base 01 template 00\n\nTsukuba Root\n21 base 1001_1030 template 0917_1349\n22 bas 1001_1030 template 1001_1435" << std::endl;
+        std::cout << "prease use one of these number\nTsukuba Root\n21 base 1001_1030 template 0917_1349\n22 bas 1001_1030 template 1001_1435" << std::endl;
         return;
     }
     for (int m = load_num; m < num_t; m++)
@@ -269,20 +269,25 @@ void templete_Canny(int execute_num)
             j = rand() % 490;
             */
             dpath = make_path(dir, path_m, k, tag);
-            std::cout << "match" << path << " : " << dpath << std::endl;
+            //std::cout << "match " << path << " : " << dpath << std::endl;
 
             sim = cv::imread(dpath, cv::IMREAD_GRAYSCALE);
+            //std::cout << "sim read ok!" << std::endl;
 
-            cv::matchTemplate(rim, sim(cv::Range(c_sim.rows / 10, (9 * c_sim.rows) / 10), cv::Range(c_sim.cols / 10, (9 * c_sim.cols) / 10)), tim, cv::TM_CCOEFF_NORMED);
+            //std::cout << rim.size() << " " << sim.size() << std::endl;
+            cv::matchTemplate(rim, sim(cv::Range(sim.rows / 10, (9 * sim.rows) / 10), cv::Range(sim.cols / 10, (9 * sim.cols) / 10)), tim, cv::TM_CCOEFF_NORMED);
             cv::minMaxLoc(tim, &min_t, &max_t, &p_min_t, &p_max_t);
+            //std::cout << "small template ok!" << std::endl;
 
             cv::Canny(cv::imread(make_cpath(dir, path_m, k, tag)), c_sim, c_mnum1, c_mnum2);
             cv::matchTemplate(c_rim, c_sim(cv::Range(c_sim.rows / 10, (9 * c_sim.rows) / 10), cv::Range(c_sim.cols / 10, (9 * c_sim.cols) / 10)), c_tim, cv::TM_CCOEFF_NORMED);
             cv::minMaxLoc(c_tim, &min_c, &max_c, &p_min_c, &p_max_c);
+            //std::cout << "Normal Canny ok!" << std::endl;
 
             cv::Canny(sim, cs_sim, cs_mnum1, cs_mnum2);
             cv::matchTemplate(cs_rim, cs_sim(cv::Range(cs_sim.rows / 10, (9 * cs_sim.rows) / 10), cv::Range(cs_sim.cols / 10, (9 * cs_sim.cols) / 10)), cs_tim, cv::TM_CCOEFF_NORMED);
             cv::minMaxLoc(cs_tim, &min_cs, &max_cs, &p_min_cs, &p_max_cs);
+            //std::cout << "small Canny ok!" << std::endl;
 
             results.resize(result_size + 1);
             results[result_size].max_t = max_t;

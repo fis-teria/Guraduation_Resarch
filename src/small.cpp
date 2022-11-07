@@ -20,29 +20,36 @@ int main(int argc, char **argv)
   std::string path;
   std::string dpath;
   std::cout << argv[2] << " : " << argv[3] << std::endl;
+  std::string tag = argv[4];
   for (int i = std::atoi(argv[2]); i < std::atoi(argv[3]) + 1; i++)
   {
     if (i < 10)
     {
-      path = dir + "/00000" + std::to_string(i) + ".jpg";
-      dpath = dir + "_template/00000" + std::to_string(i) + ".jpg";
+      path = dir + "/00000" + std::to_string(i) + tag;
+      dpath = dir + "_template/00000" + std::to_string(i) + tag;
     }
     else if (i < 100)
     {
-      path = dir + "/0000" + std::to_string(i) + ".jpg";
-      dpath = dir + "_template/0000" + std::to_string(i) + ".jpg";
+      path = dir + "/0000" + std::to_string(i) + tag;
+      dpath = dir + "_template/0000" + std::to_string(i) + tag;
     }
-    else if (1 < 1000)
+    else if (i < 1000)
     {
-      path = dir + "/000" + std::to_string(i) + ".jpg";
-      dpath = dir + "_template/000" + std::to_string(i) + ".jpg";
+      path = dir + "/000" + std::to_string(i) + tag;
+      dpath = dir + "_template/000" + std::to_string(i) + tag;
     }
+    else if (i < 10000)
+    {
+      path = dir + "/00" + std::to_string(i) + tag;
+      dpath = dir + "_template/00" + std::to_string(i) + tag;
+    }
+
     std::cout << path << "\n";
     std::cout << dpath << std::endl;
     iim = cv::imread(path, 0);
     sim = iim.clone();
     std::cout << iim.cols << "," << iim.rows << std::endl;
-    cv::GaussianBlur(iim, sim, cv::Size(3,3), 1.0);
+    cv::GaussianBlur(iim, sim, cv::Size(3, 3), 1.0);
     cv::resize(sim, oim, Size(), 0.1, 0.1);
     cv::imwrite(dpath, oim);
   }

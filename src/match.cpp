@@ -394,7 +394,6 @@ std::vector<cv::Mat> calculateIntegralHOG(const cv::Mat &image)
       bins[ind].at<float>(y, x) += Imag.at<float>(y, x);
     }
   }
-  std::cout << "covert HOG" << std::endl;
 
   // 角度別に積分画像生成
   std::vector<cv::Mat> integrals(N_BIN);
