@@ -361,7 +361,7 @@ void cvt_LBP(const cv::Mat &src, cv::Mat &lbp)
 #define R (CELL_SIZE * (BLOCK_SIZE)*0.5) // ブロックの大きさの半分（ピクセル数）
 
 // 積分画像生成
-std::vector<cv::Mat> calculateIntegralHOG(const cv::Mat &image)
+std::vector<cv::Mat> calculateIntegralHOG(const cv::Mat &image) 
 {
   // X, Y方向に微分
   cv::Mat xsobel, ysobel;
