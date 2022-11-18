@@ -22,8 +22,8 @@ void cvt_LBP(const cv::Mat &src, cv::Mat &lbp)
   // cv::cvtColor(padsrc, padsrc, cv::COLOR_BGR2GRAY);
   copyMakeBorder(src, padsrc, 1, 1, 1, 1, cv::BORDER_REPLICATE);
 
-  //cv::imshow("first", src);
-  //cv::imshow("third", lbp);
+  // cv::imshow("first", src);
+  // cv::imshow("third", lbp);
   for (int x = 1; x < padsrc.cols - 1; x++)
   {
     for (int y = 1; y < padsrc.rows - 1; y++)
@@ -38,7 +38,7 @@ void cvt_LBP(const cv::Mat &src, cv::Mat &lbp)
       }
     }
   }
-  //cv::imshow("second", lbp);
+  // cv::imshow("second", lbp);
 }
 
 #define N_BIN 9             // ヒストグラムのビン数
@@ -205,12 +205,13 @@ int main()
 {
 
   cv::Mat src, src2, dst_LBP, dst_HOG, dst_LBP2, dst_HOG2;
-  src = cv::imread("Test00/000159.jpg", 0);
+  src = cv::imread("Test00_template/000159.jpg", 0);
   src2 = cv::imread("Test01/000001.jpg", 0);
-  cvt_LBP(src2, dst_LBP2);
-  cvt_HOG(src2, dst_HOG2);
   cvt_LBP(src, dst_LBP);
   cvt_HOG(src, dst_HOG);
+  /*
+  cvt_LBP(src2, dst_LBP2);
+  cvt_HOG(src2, dst_HOG2);
   // std::cout << dst_HOG.cols << "  " << src.cols << std::endl;
   cv::imshow("a", src);
   cv::imshow("b", dst_LBP);
@@ -218,7 +219,6 @@ int main()
   cv::imshow("d", src2);
   cv::imshow("e", dst_LBP2);
   cv::imshow("f", dst_HOG2);
-  /*
   */
   cv::waitKey(0);
   return 0;

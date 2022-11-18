@@ -5,7 +5,6 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/videoio.hpp>
 
-#define ZERO2ONE
 
 int image_to_video(std::string result, std::string image_name, std::string ext, int frame_num, int frame_num2, double frame_rate)
 {
@@ -51,16 +50,10 @@ int image_to_video(std::string result, std::string image_name, std::string ext, 
 
 int main()
 {
-#ifdef ZERO2ONE
-    std::string result = "gra/resultmv/resultmv00.mp4";
-    std::string image_name = "gra/result00_CSV/";
+    std::string result = "gra/resultmv/resultLHmv00.mp4";
+    std::string image_name = "gra/result00LH/";
     int frame_num2 = 671;
-#endif
-#ifndef ZERO2ONE
-    std::string result = "gra/resultmv/resultmv01.mp4";
-    std::string image_name = "gra/result01_CSV/";
-    int frame_num2 = 489;
-#endif
+
     int frame_num = 100000;
     std::string ext = ".png";
     double frame_rate = 60.0;
