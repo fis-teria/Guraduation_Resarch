@@ -50,9 +50,9 @@ int image_to_video(std::string result, std::string image_name, std::string ext, 
 
 int main()
 {
-    std::string result = "gra/resultmv/resultLHmv00.mp4";
-    std::string image_name = "gra/result00LH/";
-    int frame_num2 = 671;
+    std::string result = "gra/resultmv/resultTmv00.mp4";
+    std::string image_name = "gra/Tsukuba00/";
+    int frame_num2 = 4546;
 
     int frame_num = 100000;
     std::string ext = ".png";
