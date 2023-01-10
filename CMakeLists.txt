@@ -15,7 +15,7 @@ else()
   link_directories(/usr/local/lib)
 endif()
 # ビルドに関する設定
-set(EXECUTABLES "small;match;canny;binaly;proto_binaly;exif;img2mp4;lbp_hog;match_Tsukuba;time")
+set(EXECUTABLES "small;match;canny;binaly;proto_binaly;exif;img2mp4;lbp_hog;match_Tsukuba_LBP;time;match_Tsukuba_HOG;match_Tsukuba_Canny")
 set(DEPENDENT_LIBS opencv_core;opencv_highgui;opencv_imgcodecs;opencv_imgproc;exiv2;opencv_videoio)
 foreach(target IN LISTS EXECUTABLES)
   add_executable(${target} src/${target}.cpp)

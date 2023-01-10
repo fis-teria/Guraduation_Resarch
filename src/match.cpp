@@ -729,3 +729,16 @@ int main(int argc, char **argv)
 
   return 0;
 }
+
+/*
+std::vector<double> parameter;
+parameter.resize(contors.size());
+
+for(int i = 0; i < contors.size(); i++){
+  parameter[i] = cv::arcLength(contors[i], true)
+}
+
+sort(aaa.begin(), aaa.end());
+
+<< " " << parametor[]
+*/

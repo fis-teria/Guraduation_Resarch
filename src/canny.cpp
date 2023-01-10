@@ -257,17 +257,17 @@ int main(int argc, char **argv)
         return -1;
     // test00
     path = make_path(dir, 0, i);
-    rim = cv::imread("gra/Tsukuba00/000500.png", cv::IMREAD_GRAYSCALE);
+    rim = cv::imread("gra/Tsukuba00/000510.png", cv::IMREAD_GRAYSCALE);
     // check_sky_edge(aim(cv::Range(0, aim.rows / 5), cv::Range(2 * aim.cols / 5, 3 * aim.cols / 5)));
     // check_sky_edge(aim);
-    cv::Canny(rim, c_rim, 200, 500);
+    cv::Canny(rim, c_rim, 200, 400);
     cv::resize(rim, rim, cv::Size(), 0.1, 0.1);
     cv::Canny(rim, cs_rim, 200, 400);
 
     // test01
     dpath = make_path(dir, 1, j);
-    sim = cv::imread("gra/Tsukuba01/000500.png", cv::IMREAD_GRAYSCALE);
-    cv::Canny(sim, c_sim, 200, 500);
+    sim = cv::imread("gra/Tsukuba02/000500.png", cv::IMREAD_GRAYSCALE);
+    cv::Canny(sim, c_sim, 200, 400);
     cv::resize(sim, sim, cv::Size(), 0.1, 0.1);
     cv::Canny(sim, cs_sim, 200, 400);
 

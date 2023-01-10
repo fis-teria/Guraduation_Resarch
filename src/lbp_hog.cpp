@@ -205,21 +205,19 @@ int main()
 {
 
   cv::Mat src, src2, dst_LBP, dst_HOG, dst_LBP2, dst_HOG2;
-  src = cv::imread("Test00_template/000159.jpg", 0);
+  src = cv::imread("Test00/000159.jpg", 0);
   src2 = cv::imread("Test01/000001.jpg", 0);
-  cvt_LBP(src, dst_LBP);
+  //cvt_LBP(src, dst_LBP);
   cvt_HOG(src, dst_HOG);
-  /*
-  cvt_LBP(src2, dst_LBP2);
+  //cvt_LBP(src2, dst_LBP2);
   cvt_HOG(src2, dst_HOG2);
   // std::cout << dst_HOG.cols << "  " << src.cols << std::endl;
-  cv::imshow("a", src);
-  cv::imshow("b", dst_LBP);
+  //cv::imshow("a", src);
+  //cv::imshow("b", dst_LBP);
   cv::imshow("c", dst_HOG);
-  cv::imshow("d", src2);
-  cv::imshow("e", dst_LBP2);
-  cv::imshow("f", dst_HOG2);
-  */
+  //cv::imshow("d", src2);
+  //cv::imshow("e", dst_LBP2);
+  cv::imshow("f", dst_HOG2(cv::Range(70, 870), cv::Range(100, 910)));
   cv::waitKey(0);
   return 0;
 }
