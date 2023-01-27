@@ -16,9 +16,7 @@
 #define MATCH00to01
 #define root1001_1430match2_917
 #define root1001_1435match2_1001_1030
-std::string SAVE0 = "save_tsukuba_LBP.txt";
-std::string SAVE1 = "save_tsukuba_Canny.txt";
-std::string SAVE2 = "save_tsukuba_HOG.txt";
+std::string SAVE = "save_tsukuba_LBP.txt";
 /*
 0917_1349
 start 50
@@ -100,12 +98,12 @@ std::string make_tpath(std::string dir, int dir_num, int var, std::string tag)
     }
 }
 
-int read_save(int execute_num)
+int read_save()
 {
     int save_num;
     std::ifstream ifs;
 
-    ifs = std::ifstream(SAVE0.c_str());
+    ifs = std::ifstream(SAVE.c_str());
     std::string str;
     getline(ifs, str);
     std::cout << str << std::endl;
@@ -113,10 +111,10 @@ int read_save(int execute_num)
     return save_num;
 }
 
-void save(int m, int execute_num)
+void save(int m)
 {
     std::ofstream savefile;
-    savefile = std::ofstream(SAVE0.c_str());
+    savefile = std::ofstream(SAVE.c_str());
     savefile << m << std::endl;
     savefile.close();
 }
@@ -200,7 +198,7 @@ void cvt_LBP(const cv::Mat &src, cv::Mat &lbp)
     }
     // cv::imshow("second", lbp);
 }
-int position_Check(const cv::Mat src, std::string path, int now_locate, int execute_num)
+int position_Check(const cv::Mat src, std::string path, int now_locate)
 {
     cv::Mat rim, sim, tim;
     cv::Mat sl_rim, sl_sim, sl_tim;
@@ -254,8 +252,7 @@ int position_Check(const cv::Mat src, std::string path, int now_locate, int exec
         // std::cout << "match " << path << " : " << dpath << std::endl;
 
         sim = cv::imread(dpath, cv::IMREAD_GRAYSCALE);
-        if (execute_num == 0)
-            cv::resize(sim, sim, cv::Size(), 0.1, 0.1);
+        cv::resize(sim, sim, cv::Size(), 0.1, 0.1);
 
         // clock_t begin = clock();
         // cvt_LBP(sim, sl_sim);
@@ -293,7 +290,6 @@ int main(int argc, char **argv)
         return 0;
     }
     */
-    int execute_num = atoi(argv[1]);
 
     cv::Mat img, src, dst, locate_image;
     cv::Mat img_lst[2];
@@ -303,7 +299,7 @@ int main(int argc, char **argv)
     std::string path;
     int now_locate = 0;
     int time = 0;
-    int load_num = read_save(execute_num);
+    int load_num = read_save();
     if (load_num == -1)
     {
         std::cout << "Error command line num only use 0, 1, 2" << std::endl;
@@ -322,6 +318,7 @@ int main(int argc, char **argv)
     std::vector<location> locate_tmp;
     int lm_size = 0;
     int lt_size = 0;
+    std::cout << "a" <<std::endl;
     while (getline(ifs, line))
     {
 
@@ -347,7 +344,7 @@ int main(int argc, char **argv)
     ///*
     std::string location_path;
     location_path = "gra/r_file/location_LBP.csv";
-    std::ofstream outputfile(location_path, std::ios::app);
+    //std::ofstream outputfile(location_path, std::ios::app);
     for (int i = load_num; i < 4546; i++)
     {
         std::cout << "start positioning " << i << " times" << std::endl;
@@ -355,36 +352,35 @@ int main(int argc, char **argv)
         // std::cout << path << std::endl;
         img = cv::imread(path, 1);
         cv::cvtColor(img, src, cv::COLOR_BGR2GRAY);
-        if (execute_num == 0)
-            cv::resize(src, src, cv::Size(), 0.1, 0.1);
+        cv::resize(src, src, cv::Size(), 0.1, 0.1);
 
         clock_t begin = clock();
-        now_locate = position_Check(src, path, i, execute_num);
+        now_locate = position_Check(src, path, i);
         std::cout << now_locate << std::endl;
         clock_t end = clock();
         print_elapsed_time(begin, end);
 
         // time = 200000 - ((end - begin) / CLOCKS_PER_SEC) * 1000000;
 
-        dst = cv::imread(make_tpath(dir, 2, now_locate, tag), 1);
+        //dst = cv::imread(make_tpath(dir, 2, now_locate, tag), 1);
         // locate_image = cv::imread(make_path(dir, 2, now_locate, tag), 0);
         // make_locate_image(img, dst, locate_image);
         // cv::imshow("get image", img);
-        cv::resize(img, srcr, cv::Size(), 0.5, 0.5);
-        cv::resize(dst, dstr, cv::Size(), 0.5, 0.5);
-        img_lst[0] = srcr.clone();
-        img_lst[1] = dstr.clone();
-        std::cout << img_lst[0].size << " " << img_lst[1].size << std::endl;
-        cv::hconcat(img_lst, 2, locate_image);
+        //cv::resize(img, srcr, cv::Size(), 0.5, 0.5);
+        //cv::resize(dst, dstr, cv::Size(), 0.5, 0.5);
+        //img_lst[0] = srcr.clone();
+        //img_lst[1] = dstr.clone();
+        //std::cout << img_lst[0].size << " " << img_lst[1].size << std::endl;
+        //cv::hconcat(img_lst, 2, locate_image);
         // std::cout << "show locate image " << locate_image.size << std::endl;
         // cv::imshow("locate image", locate_image);
-        cv::imwrite(make_tpath(rdir, 0, i, tag), locate_image);
-        outputfile << locate_tmp[now_locate].px << "," << locate_tmp[now_locate].py << "," << now_locate << std::endl;
+        //cv::imwrite(make_tpath(rdir, 0, i, tag), locate_image);
+        //outputfile << locate_tmp[now_locate].px << "," << locate_tmp[now_locate].py << "," << now_locate << std::endl;
         //  usleep(10000000);
         //  cv::waitKey(0);
-        save(i, execute_num);
+       //save(i, execute_num);
     }
-    outputfile.close();
+    //outputfile.close();
     //*/
     return 0;
 }

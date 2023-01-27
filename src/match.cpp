@@ -240,7 +240,7 @@ void templete_Canny(int execute_num)
     std::cout << "prease use one of these number\nGunDai Root\n11 base 00 template 01\n12 base 01 template 00\n\nTsukuba Root\n21 base 1001_1030 template 0917_1349\n22 bas 1001_1030 template 1001_1435" << std::endl;
     return;
   }
-  for (int m = load_num; m < num_t; m++)
+  for (int m = load_num; m < 2; m++)
   {
 
     //テンプレート画像へのパス
@@ -724,8 +724,8 @@ int main(int argc, char **argv)
     return 1;
   }
   int execute_num = atoi(argv[1]);
-  // templete_Canny(execute_num);
-  templete_LBPandHOG(execute_num);
+  templete_Canny(execute_num);
+  //templete_LBPandHOG(execute_num);
 
   return 0;
 }

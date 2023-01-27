@@ -475,7 +475,7 @@ int main(int argc, char **argv)
     ///*
     std::string location_path;
     location_path = "gra/r_file/location_HOG.csv";
-    std::ofstream outputfile(location_path, std::ios::app);
+    //std::ofstream outputfile(location_path, std::ios::app);
     for (int i = load_num; i < 4546; i++)
     {
         std::cout << "start positioning " << i << " times" << std::endl;
@@ -492,25 +492,25 @@ int main(int argc, char **argv)
 
         // time = 200000 - ((end - begin) / CLOCKS_PER_SEC) * 1000000;
 
-        dst = cv::imread(make_tpath(dir, 2, now_locate, tag), 1);
+        //dst = cv::imread(make_tpath(dir, 2, now_locate, tag), 1);
         // locate_image = cv::imread(make_path(dir, 2, now_locate, tag), 0);
         // make_locate_image(img, dst, locate_image);
         // cv::imshow("get image", img);
-        cv::resize(img, srcr, cv::Size(), 0.5, 0.5);
-        cv::resize(dst, dstr, cv::Size(), 0.5, 0.5);
-        img_lst[0] = srcr.clone();
-        img_lst[1] = dstr.clone();
-        std::cout << img_lst[0].size << " " << img_lst[1].size << std::endl;
-        cv::hconcat(img_lst, 2, locate_image);
+        //cv::resize(img, srcr, cv::Size(), 0.5, 0.5);
+        //cv::resize(dst, dstr, cv::Size(), 0.5, 0.5);
+        //img_lst[0] = srcr.clone();
+        //img_lst[1] = dstr.clone();
+        //std::cout << img_lst[0].size << " " << img_lst[1].size << std::endl;
+        //cv::hconcat(img_lst, 2, locate_image);
         // std::cout << "show locate image " << locate_image.size << std::endl;
         // cv::imshow("locate image", locate_image);
-        cv::imwrite(make_tpath(rdir, 0, i, tag), locate_image);
-        outputfile << locate_tmp[now_locate].px << "," << locate_tmp[now_locate].py << "," << now_locate << std::endl;
+        //cv::imwrite(make_tpath(rdir, 0, i, tag), locate_image);
+        //outputfile << locate_tmp[now_locate].px << "," << locate_tmp[now_locate].py << "," << now_locate << std::endl;
         //  usleep(10000000);
         //  cv::waitKey(0);
-        save(i);
+        //save(i);
     }
-    outputfile.close();
+    //outputfile.close();
     //*/
     return 0;
 }
