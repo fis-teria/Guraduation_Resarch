@@ -345,6 +345,7 @@ int main(int argc, char **argv)
     std::string location_path;
     location_path = "gra/r_file/location_LBP.csv";
     //std::ofstream outputfile(location_path, std::ios::app);
+    
     for (int i = load_num; i < 4546; i++)
     {
         std::cout << "start positioning " << i << " times" << std::endl;

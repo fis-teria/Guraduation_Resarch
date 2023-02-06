@@ -5,6 +5,9 @@ build/gra/result_Space
 build/gra/result_Tsukuba00
 build/gra/result_Tsukuba01
 build/gra/result00_CSV
+build/gra/result00_CSV_temp
+build/gra/result00_CSV_Canny
+build/gra/result00_CSV_SCanny
 build/gra/result00LH
 build/gra/result00LH_HOG
 build/gra/result00LH_HOG_small
@@ -13,6 +16,7 @@ build/gra/result00LH_LBP_small
 build/gra/result01_CSV
 build/gra/result01LH
 build/gra/resultmv
+build/gra/slidemv
 build/gra/slide/TempImg_divide
 build/gra/tsukuba_locate
 build/gra/tsukuba_locate2

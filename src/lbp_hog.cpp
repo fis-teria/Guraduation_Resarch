@@ -205,19 +205,22 @@ int main()
 {
 
   cv::Mat src, src2, dst_LBP, dst_HOG, dst_LBP2, dst_HOG2;
-  src = cv::imread("gra/slide/TemplateImage.jpeg", 0);
-  src2 = cv::imread("gra/Tsukuba02/002100.png", 0);
-  //cvt_LBP(src, dst_LBP);
-  cvt_HOG(src, dst_HOG);
-  //cvt_LBP(src2, dst_LBP2);
-  cvt_HOG(src2, dst_HOG2);
+  cv::Mat gray;
+  src = cv::imread("Test00/000315.jpg", 0);
+  src2 = cv::imread("Test01/000133.jpg", 0);//133
+  cvt_LBP(src, dst_LBP);
+  //cvt_HOG(src, dst_HOG);
+  cvt_LBP(src2, dst_LBP2);
+  //cvt_HOG(src2, dst_HOG2);
   // std::cout << dst_HOG.cols << "  " << src.cols << std::endl;
   //cv::imshow("a", src);
-  //cv::imshow("b", dst_LBP);
-  cv::imshow("c", dst_HOG);
+  cv::imshow("b", dst_LBP);
+  cv::imwrite("dst_LBP.png",dst_LBP);
+  //cv::imshow("c", dst_HOG);
   //cv::imshow("d", src2);
-  //cv::imshow("e", dst_LBP2);
-  cv::imshow("f", dst_HOG2);
+  cv::imshow("e", dst_LBP2);
+    cv::imwrite("dst_LBP2.png",dst_LBP2);
+  //cv::imshow("f", dst_HOG2);
   //cv::imwrite("dst_HOG2.png",dst_HOG2);
   // cv::imwrite("dst_HOG2_zoom.png",dst_HOG2(cv::Range(3*dst_HOG2.rows / 10, (4 * dst_HOG2.rows) / 10), cv::Range(3*dst_HOG2.cols / 10, (4 * dst_HOG2.cols) / 10)));
  cv::waitKey(0);
